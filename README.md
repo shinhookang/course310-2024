@@ -1,2 +1,5 @@
-# course310 Computer Graphics
+# 2024 Computer Graphics (DCCS310)
+
+Prof. Shinhoo Kang
+
 
