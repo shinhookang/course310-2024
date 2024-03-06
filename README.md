@@ -1,1 +1,2 @@
-# course310-2024
+# course310 Computer Graphics
+
