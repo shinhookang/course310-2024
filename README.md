@@ -12,11 +12,11 @@ Prof. Shinhoo Kang
   - Download stable Python 3.11.8 from [here](https://www.python.org/downloads/windows/).
   - Choose Windows installer (64-bit)
   - Select 'Add python.exe to PATH'
-  - Customize installation: C:\Users\KOREA\Python\Python311
+  - Customize installation: `C:\Users\user\Python\Python311`
   - Optional Features: Documents, pip, tcl/tk and IDLE, Python test suite
   - Add Python to environment variables
   - Create shortcuts for installed applications
-  - In a terminal, type 'set' to see Python environment variables are correctly set. PATH variable should have C:\Users\KOREA\Python\Python311 and C:\Users\KOREA\Python\Python311\Scripts
+  - In a terminal, type 'set' to see Python environment variables are correctly set. PATH variable should have `C:\Users\user\Python\Python311` and `C:\Users\user\Python\Python311\Scripts`
 
 * Install virtualenv
   - ``` pip install virtualenv ```
@@ -36,7 +36,7 @@ Prof. Shinhoo Kang
   
 * Install `PyOpenGL` through `pipwin`
   - ``` pip install pipwin ```
-  - ``` pipwin PyOpenGL ```
+  - ``` pipwin install PyOpenGL ```
 
 * Install `GLFW`, `PyGLM`, and `Numpy`
   - ``` pip install glfw ```
