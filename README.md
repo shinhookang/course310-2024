@@ -29,10 +29,9 @@ Prof. Shinhoo Kang
   - Create virtual environment
   ``` virtualenv --python=python3.11 .venv ```
 
-* Activate and Deactivate virtual environment
+* Activate virtual environment
   - Go to the working directory 'test_cg'
   - ``` call .venv\Scripts\activate ``` 
-  - ``` deactivate ```
   
 * Install `PyOpenGL` through `pipwin`
   - ``` pip install pipwin ```
@@ -53,8 +52,11 @@ Prof. Shinhoo Kang
   import PIL
   ```
 
-#### Mac 
+* Deactivate virtual environment
+  - ``` deactivate ```
 
+#### Mac 
+* Under construction ...
 * Install `PyOpenGL`, `GLFW`, `PyGLM`, and `Numpy`
   - ``` pip install PyOpenGL ```
   - ``` pip install glfw ```
