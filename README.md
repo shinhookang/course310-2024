@@ -55,6 +55,14 @@ Prof. Shinhoo Kang
 * Deactivate virtual environment
   - ``` deactivate ```
 
+* You can choose your preferred editor for working with Python.
+  - Visual Studio Code 
+    - from Microsoft Store 
+  - Vim 
+    - https://www.vim.org/download.php
+    - Download gvim_9.1.0_x64_signed.exe 
+    - Update PATH variable: `win+x`-> system-> advanced system settings -> environment variables
+
 #### Mac 
 * Under construction ...
 * Install `PyOpenGL`, `GLFW`, `PyGLM`, and `Numpy`
