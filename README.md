@@ -38,10 +38,11 @@ Prof. Shinhoo Kang
   - ``` pip install pipwin ```
   - ``` pipwin install PyOpenGL ```
 
-* Install `GLFW`, `PyGLM`, and `Numpy`
+* Install `GLFW`, `PyGLM`, `pillow`, and `Numpy`
   - ``` pip install glfw ```
   - ``` pip install PyGLM ```
   - ``` pip install numpy ```
+  - ``` pip install pillow ```
 
 * Test 
   ```python
@@ -49,6 +50,7 @@ Prof. Shinhoo Kang
   import glfw
   import glm
   import numpy
+  import PIL
   ```
 
 #### Mac 
@@ -58,5 +60,6 @@ Prof. Shinhoo Kang
   - ``` pip install glfw ```
   - ``` pip install PyGLM ```
   - ``` pip install numpy ```
+  - ``` pip install pillow ```
 
 
