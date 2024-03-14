@@ -25,7 +25,7 @@ def main():
         # rendering
         glClear(GL_COLOR_BUFFER_BIT) # clear color buffers to preset values
 
-        # - - - - - - points - - - - - 
+        # - - - - - - lines - - - - - 
         glBegin(GL_LINE_LOOP)
         n = 12
         h = 2*np.pi/n
@@ -36,7 +36,7 @@ def main():
             yi = r*np.sin(theta)
             glVertex2f(xi,yi)
         glEnd()
-        # - - - - - - points - - - - - 
+        # - - - - - - lines - - - - - 
 
         # Swap front and back buffers
         glfwSwapBuffers(window)
