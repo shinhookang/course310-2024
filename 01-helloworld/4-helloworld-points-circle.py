@@ -1,5 +1,6 @@
 from OpenGL.GL import *
 from glfw.GLFW import *
+
 import numpy as np
 
 def main():
