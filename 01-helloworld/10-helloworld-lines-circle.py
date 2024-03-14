@@ -1,6 +1,8 @@
 from OpenGL.GL import *
 from glfw.GLFW import *
 
+import numpy as np
+
 def main():
 
     # Before you can use most GLFW functions, the library must be initialized.
@@ -9,7 +11,7 @@ def main():
         return 
     
     # Ceate a window and OpenGL context
-    window = glfwCreateWindow(640, 480, 'Hello World! Line', None, None)
+    window = glfwCreateWindow(640, 480, 'Hello World! Points on a circle', None, None)
     if not window:
         glfwTerminate()
         return
@@ -23,12 +25,18 @@ def main():
         # rendering
         glClear(GL_COLOR_BUFFER_BIT) # clear color buffers to preset values
 
-        # - - - - - - line - - - - - 
-        glBegin(GL_LINES)
-        glVertex2f(-1/2,-1/2)
-        glVertex2f(1/2,1/2)
+        # - - - - - - points - - - - - 
+        glBegin(GL_LINE_LOOP)
+        n = 12
+        h = 2*np.pi/n
+        r = 0.5
+        for i in range(n):
+            theta = h*i
+            xi = r*np.cos(theta)
+            yi = r*np.sin(theta)
+            glVertex2f(xi,yi)
         glEnd()
-        # - - - - - - line - - - - - 
+        # - - - - - - points - - - - - 
 
         # Swap front and back buffers
         glfwSwapBuffers(window)
