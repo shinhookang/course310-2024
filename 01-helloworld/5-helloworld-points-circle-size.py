@@ -11,7 +11,7 @@ def main():
         return 
     
     # Ceate a window and OpenGL context
-    window = glfwCreateWindow(640, 480, 'Hello World! Points in a line', None, None)
+    window = glfwCreateWindow(640, 480, 'Hello World! Points of increasing size on a circle', None, None)
     if not window:
         glfwTerminate()
         return
@@ -26,18 +26,19 @@ def main():
         glClear(GL_COLOR_BUFFER_BIT) # clear color buffers to preset values
 
         # - - - - - - points - - - - - 
-        glPointSize(10)
-        glBegin(GL_POINTS)
-        
         n = 12
         h = 2*np.pi/n
         r = 0.5
         for i in range(n):
+            psize = 30-2*i
+            glPointSize(psize)
+
             theta = h*i
             xi = r*np.cos(theta)
             yi = r*np.sin(theta)
+            glBegin(GL_POINTS)
             glVertex2f(xi,yi)
-        glEnd()
+            glEnd()
         # - - - - - - points - - - - - 
 
         # Swap front and back buffers
