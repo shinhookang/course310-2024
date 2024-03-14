@@ -9,7 +9,7 @@ def main():
         return 
     
     # Ceate a window and OpenGL context
-    window = glfwCreateWindow(640, 480, 'Hello World! Two Lines', None, None)
+    window = glfwCreateWindow(640, 480, 'Hello World! Two Lines with GL_LINE_LOOP', None, None)
     if not window:
         glfwTerminate()
         return
@@ -24,9 +24,8 @@ def main():
         glClear(GL_COLOR_BUFFER_BIT) # clear color buffers to preset values
 
         # - - - - - - lines - - - - - 
-        glBegin(GL_LINES)
+        glBegin(GL_LINE_LOOP)
         glVertex2f(-1/2,-1/4)
-        glVertex2f(0,0)
         glVertex2f(0,0)
         glVertex2f(1/4,1/2)
         glEnd()
