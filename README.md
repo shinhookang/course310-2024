@@ -75,4 +75,5 @@ Prof. Shinhoo Kang
 
 ## OpenGL Reference
 * https://registry.khronos.org/OpenGL-Refpages/
-* https://www.khronos.org/files/opengl-quick-reference-card.pdf
+* Reference card for [OpenGL 3.2](https://www.khronos.org/files/opengl-quick-reference-card.pdf)
+* Reference card for [OpenGL 4.1](https://www.khronos.org/files/opengl41-quick-reference-card.pdf)
