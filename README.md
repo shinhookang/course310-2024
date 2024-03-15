@@ -75,3 +75,4 @@ Prof. Shinhoo Kang
 
 ## OpenGL Reference
 * https://registry.khronos.org/OpenGL-Refpages/
+* https://www.khronos.org/files/opengl-quick-reference-card.pdf
