@@ -43,14 +43,7 @@ def CreateShader(vertexShaderSrc, fragmentShaderSrc):
     )
 
     return shader
- 
- 
-
-def draw_frame(vao, MVP, MVP_loc):
-    glBindVertexArray(vao)
-    glUniformMatrix4fv(MVP_loc, 1, GL_FALSE, glm.value_ptr(MVP))
-    glDrawArrays(GL_LINES, 0, 6)
- 
+  
 
 def createVAOCube():
     # - - - - - - - VBO and VAO - - - - - - - 
