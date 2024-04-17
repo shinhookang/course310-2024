@@ -6,6 +6,9 @@ import glm
 from OpenGL.GL.shaders import compileProgram,compileShader
 
 
+# Base position
+basePos = glm.vec3(3.0, 0., 0.)
+baseAng = 0.
 
 # Camera Position
 camY = 0.
@@ -15,11 +18,25 @@ cameraUp    = glm.vec3(0., 1.,  0.)
 cameraPos   = glm.vec3(camX,camY,camZ)
 targetPos   = glm.vec3(0., 0., 0.)
 
-
 def key_callback(window, key, scancode, action, mods):
+    global basePos, baseAng
     if key==GLFW_KEY_ESCAPE and action==GLFW_PRESS:
         glfwSetWindowShouldClose(window, GLFW_TRUE)
-    
+    else:
+        if action==GLFW_PRESS or action==GLFW_REPEAT:
+            if key==GLFW_KEY_RIGHT:
+                basePos.x += 0.1
+            elif key==GLFW_KEY_LEFT:
+                basePos.x -= 0.1
+            elif key==GLFW_KEY_DOWN:
+                basePos.y -= 0.1
+            elif key==GLFW_KEY_UP:
+                basePos.y += 0.1
+            elif key==GLFW_KEY_Z:
+                baseAng += 0.1
+            elif key==GLFW_KEY_C:
+                baseAng -= 0.1        
+                
 vertexShaderBoxSrc = '''
 #version 330 core
 layout (location = 0) in vec3 vertexPosition; 
@@ -206,7 +223,7 @@ def main():
         # - - - - Box - Base - - - - 
 
         # Transformation of coordinate system from {0} to {1}
-        M1 = glm.translate(glm.vec3(3., 0., 0.))
+        M1 = glm.translate(glm.vec3(basePos.x, basePos.y, basePos.z))*glm.rotate(baseAng, glm.vec3(0., 0., 1.))
         # Local Shape Transformation in {1}
         S = glm.scale(glm.vec3(2., 1., 1.))
         T = glm.translate(glm.vec3(-1., 0., 0.))
