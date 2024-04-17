@@ -6,6 +6,7 @@ import glm
 from OpenGL.GL.shaders import compileProgram,compileShader
 
 
+
 # Camera Position
 camY = 0.
 camZ = 10.
@@ -16,6 +17,7 @@ targetPos   = glm.vec3(0., 0., 0.)
 
 
 def key_callback(window, key, scancode, action, mods):
+    global cameraPos, lat, lon, radius
     if key==GLFW_KEY_ESCAPE and action==GLFW_PRESS:
         glfwSetWindowShouldClose(window, GLFW_TRUE)
     
@@ -68,7 +70,7 @@ def CreateShader(vertexShaderSrc, fragmentShaderSrc):
 
     return shader
   
-
+ 
 def InitializeBox():
     """ InitializeBox
           y
@@ -92,14 +94,14 @@ def InitializeBox():
                 1.,   0.,   0.,  # v1
                 0.,   1.,   0.,  # v2
                 1.,   1.,   0.]  # v3
-    vertices = np.array(vertices, dtype=np.float32) # 4bytes*12=48bytes
+    vertices = np.array(vertices, dtype=np.float32) # 4bytes*18=72bytes
 
     dtype = np.dtype(np.float32).itemsize
 
     # Each face has two triangles
     # The order of verticies in each triangle defines the normal direction.
     triconnect = [0,1,3,  0,3,2] # face0
-    triconnect = np.array(triconnect, dtype=np.uint32) # 4bytes*6=24bytes
+    triconnect = np.array(triconnect, dtype=np.uint32) # 4bytes*9=36bytes
 
     dtype = np.dtype(np.float32).itemsize 
 
@@ -127,7 +129,7 @@ def DrawBox(vao,AmatLoc,Amat,cvecLoc,cvec):
     glBindVertexArray(vao)
     glUniformMatrix4fv(AmatLoc, 1, GL_FALSE, glm.value_ptr(Amat))
     glUniform3fv(cvecLoc, 1, glm.value_ptr(cvec))
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, None) 
+    glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, None) 
 
 
 def main():
@@ -200,7 +202,76 @@ def main():
         cvec = glm.vec3(1,1,1) # white
         glUseProgram(shaderBox)
         DrawBox(vaoBox,AmatLocBox,Amat,cvecLocBox,cvec)
-       
+
+
+        # - - - - Box - Base - - - - 
+
+        # Transformation of coordinate system from {0} to {1}
+        M1 = glm.translate(glm.vec3(3., 0., 0.))
+        # Local Shape Transformation in {1}
+        S = glm.scale(glm.vec3(2., 1., 1.))
+        T = glm.translate(glm.vec3(-1., 0., 0.))
+        G1 = T * S
+
+        # model matrix
+        # M = glm.mat4()
+        M = M1 * G1
+        
+        # MVP matrix 
+        Amat = P*V*M
+        
+        # Draw Box
+        cvec = glm.vec3(1,1,0) # yellow
+        glUseProgram(shaderBox)
+        DrawBox(vaoBox,AmatLocBox,Amat,cvecLocBox,cvec)
+
+        # - - - - Box - {c2} - - - - 
+
+        # Transformation of coordinate system from {1} to {2}
+        theta2 = glm.radians(40)
+        M2 = glm.translate(glm.vec3(0., 1., 0.))*glm.rotate(theta2, glm.vec3(0., 0., 1.))
+        
+        # Local Shape Transformation in {1}
+        S = glm.scale(glm.vec3(1., 2., 1.))
+        T = glm.translate(glm.vec3(-1./2., 0., 0.))
+        G2 = T * S
+
+        # model matrix
+        # M = glm.mat4()
+        M = M1 * M2 * G2
+
+        # MVP matrix 
+        Amat = P*V*M
+        
+        # Draw Box
+        cvec = glm.vec3(255./255., 165./255., 0./255.) # Orange
+        glUseProgram(shaderBox)
+        DrawBox(vaoBox,AmatLocBox,Amat,cvecLocBox,cvec)
+
+        # - - - - Box - {c3} - - - - 
+
+        # Transformation of coordinate system from {2} to {3}
+        theta3 = glm.radians(-20.)
+        M3 = glm.translate(glm.vec3(0., 2., 0.))*glm.rotate(theta3, glm.vec3(0., 0., 1.))
+        
+        # Local Shape Transformation in {1}
+        S = glm.scale(glm.vec3(3., 0.8, 1.))
+        T = glm.translate(glm.vec3(0., -1./2, 0.))
+        G3 = T * S
+
+        # model matrix
+        # M = glm.mat4()
+        M = M1 * M2 * M3 * G3
+
+        # MVP matrix 
+        Amat = P*V*M
+        
+        # Draw Box
+        cvec = glm.vec3(255./255., 192./255., 203./255.) # Pink
+        glUseProgram(shaderBox)
+        DrawBox(vaoBox,AmatLocBox,Amat,cvecLocBox,cvec)
+
+
         # Swap front and back buffers
         glfwSwapBuffers(window)
 
