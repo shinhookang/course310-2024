@@ -11,7 +11,7 @@ basePos = glm.vec3(3.0, 0., 0.)
 baseAng = 0.
 
 # gBox angle
-gBoxAng = 40.
+gBoxAng = glm.radians(40)
 
 
 # Camera Position
@@ -266,6 +266,8 @@ def main():
     pBox.SetLocalG(glm.translate(glm.vec3(0., -1./2, 0.))*glm.scale(glm.vec3(3., 0.8, 1.)))
     pBox.SetLocalM(glm.translate(glm.vec3(0., 2., 0.))*glm.rotate(glm.radians(-20.), glm.vec3(0., 0., 1.))) # from {2} to {3}
 
+    yBox.SetGlobalM() 
+
     # Loop until the user closes the window
     while not glfwWindowShouldClose(window):
 
@@ -301,12 +303,10 @@ def main():
         # - - - - Update Local Coordinates for Yellow, Green, Pink Boxes - - - - 
         M1 = glm.translate(glm.vec3(basePos.x, basePos.y, basePos.z))*glm.rotate(baseAng, glm.vec3(0., 0., 1.))
         yBox.SetLocalM(M1)
-        M2 = glm.translate(glm.vec3(0., 1., 0.))*glm.rotate(glm.radians(gBoxAng), glm.vec3(0., 0., 1.))
+        M2 = glm.translate(glm.vec3(0., 1., 0.))*glm.rotate(gBoxAng, glm.vec3(0., 0., 1.))
         gBox.SetLocalM(M2)
-
         yBox.SetGlobalM()     
-        # gBox.SetGlobalM()     
-
+        
         # - - - - Draw Boxes - - - 
         glUseProgram(shaderBox)
         for iBox in [yBox,gBox,pBox]:
