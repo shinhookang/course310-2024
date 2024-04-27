@@ -64,7 +64,13 @@ Prof. Shinhoo Kang
     - Update PATH variable: `win+x`-> system-> advanced system settings -> environment variables
 
 #### Mac 
-* Under construction ...
+* Virtual environment
+  - Install
+    - pip install virtualenv
+  - Create virtual environment
+    - ``` virtualenv .venv ```
+  - Activate the environment by ```source .venv/bin/activate```
+  - Deactivate the environment by ```deactivate```
 * Install `PyOpenGL`, `GLFW`, `PyGLM`, and `Numpy`
   - ``` pip install PyOpenGL ```
   - ``` pip install glfw ```
