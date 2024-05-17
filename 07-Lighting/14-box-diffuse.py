@@ -6,45 +6,72 @@ import glm
 from OpenGL.GL.shaders import compileProgram,compileShader
 
 
+# Base position
+basePos = glm.vec3(0.0, 0., 0.)
+baseAng = 0.
+
+# Camera Position
+camY = 0.
+camZ = 5.
+camX = 0.
+cameraUp    = glm.vec3(0., 1.,  0.)
+cameraPos   = glm.vec3(camX,camY,camZ)
+targetPos   = glm.vec3(0., 0., 0.)
+
 def key_callback(window, key, scancode, action, mods):
+    global basePos, baseAng
     if key==GLFW_KEY_ESCAPE and action==GLFW_PRESS:
         glfwSetWindowShouldClose(window, GLFW_TRUE)
-     
+    else:
+        if action==GLFW_PRESS or action==GLFW_REPEAT:
+            if key==GLFW_KEY_RIGHT:
+                basePos.x += 0.1
+            elif key==GLFW_KEY_LEFT:
+                basePos.x -= 0.1
+            elif key==GLFW_KEY_DOWN:
+                basePos.y -= 0.1
+            elif key==GLFW_KEY_UP:
+                basePos.y += 0.1
+            elif key==GLFW_KEY_Z:
+                baseAng += 0.1
+            elif key==GLFW_KEY_C:
+                baseAng -= 0.1        
+                
 vertexShaderSrc = '''
 #version 330 core
 layout (location = 0) in vec3 vertexPosition; 
 layout (location = 1) in vec3 vertexNormal; 
 
 out vec3 fragmentColor;
-uniform mat4 Amat; 
-uniform mat4 Mmat; 
+uniform mat4 Amat;
+uniform mat4 Mmat;  
+uniform vec3 cvec;
 void main()
 {
+
     vec4 point = vec4(vertexPosition, 1.0);
     gl_Position = Amat * point;
-    // fragmentColor = vec3(1.0,0.75,0.8); // pink
-
-
+ 
     // ambient color
     vec3 rho_a = 0.1 * vec3(1.0,0.75,0.8); // pink
     vec3 I_a = vec3(1.,1.,1.); // white
     vec3 ambient = rho_a * I_a;
 
     // diffuse color 
-    vec3 normal = normalize(inverse(transpose(mat3(Mmat))) * vertexNormal); // n_new = A^{-T} * n
+    vec3 normal = vec3(0., 0., 1.); // surface normal in 2D. 
     vec3 mypos = vec3(Mmat * point);
-    vec3 lightpos = vec3(4., 3., 5.);
+    vec3 lightpos = vec3(2., 1., 1.);
     vec3 ellvec = normalize(lightpos - mypos);
     float costheta = dot(ellvec,normal);
     vec3 rho_d = vec3(1.0,0.75,0.8); // pink
     vec3 I_d = vec3(1., 1., 1.); // white
     vec3 diffuse = rho_d * costheta* I_d;
- 
-    fragmentColor = ambient + diffuse;
+
+    fragmentColor = diffuse;
 }
 '''
-
-
+     
+ 
 fragmentShaderSrc = '''
 #version 330 core
 in vec3 fragmentColor;
@@ -55,6 +82,8 @@ void main()
 }
 '''
 
+
+ 
 def CreateShader(vertexShaderSrc, fragmentShaderSrc):
 
     shader = compileProgram(
@@ -63,73 +92,71 @@ def CreateShader(vertexShaderSrc, fragmentShaderSrc):
     )
 
     return shader
+  
  
- 
+def InitializeBox():
+    """ InitializeBox
+          y
+          ^
+         v2------v3
+          |    / |
+          | /    |
+         v0-----v1--> x
+        /
+      /
+    z
 
-def createVAOCube():
-    # - - - - - - - VBO and VAO - - - - - - - 
-    # Triangle vertices for cube
-    vertices = [-1., -1.,  1., # v0
-                 1., -1.,  1., # v1
-                -1.,  1.,  1., # v2
-                 1.,  1.,  1., # v3
-                -1.,  1., -1., # v4
-                 1.,  1., -1., # v5
-                -1., -1., -1., # v6
-                 1., -1., -1.] # v7
-    vertices = 1./2.*np.array(vertices, dtype=np.float32) # 4bytes*24=96bytes
+    triangle 0 = [0, 1, 3]
+    triangle 1 = [0, 3, 2]
 
-    # Define averaged normal vector at each vertex
-    normals = [ -1., -1.,  1., # v0
-                 1., -1.,  1., # v1
-                -1.,  1.,  1., # v2
-                 1.,  1.,  1., # v3
-                -1.,  1., -1., # v4
-                 1.,  1., -1., # v5
-                -1., -1., -1., # v6
-                 1., -1., -1.] # v7
-    normals = 1./np.sqrt(3) * np.array(normals, dtype=np.float32) # 4bytes*9=36bytes
+    Input: 
+    Output: vao
+    """
+    
+    vertices = [0.,   0.,   0.,  # v0
+                1.,   0.,   0.,  # v1
+                0.,   1.,   0.,  # v2
+                1.,   1.,   0.]  # v3
+    vertices = np.array(vertices, dtype=np.float32) # 4bytes*18=72bytes
+
+    dtype = np.dtype(np.float32).itemsize
 
     # Each face has two triangles
     # The order of verticies in each triangle defines the normal direction.
-    triconnect = [0,1,2,  2,1,3, # face0
-                  2,3,4,  3,5,4, # face1
-                  4,5,6,  6,5,7, # face2
-                  0,6,7,  1,0,7, # face3
-                  1,7,3,  3,7,5, # face4
-                  6,0,4,  4,0,2] # face5
+    triconnect = [0,1,3,  0,3,2] # face0
     triconnect = np.array(triconnect, dtype=np.uint32) # 4bytes*9=36bytes
 
     dtype = np.dtype(np.float32).itemsize 
-    
+
     # Create the name of Vertex Array Object(VAO)
-    # Bind a vertex array object to the name of VAO
     vao = glGenVertexArrays(1)
     glBindVertexArray(vao) 
 
-    # Generate the name of Vertex Buffer Object (VBO)
-    # Bind a buffer object to the name of VBO
-    vbo = glGenBuffers(2) # Error occurs if vbo < 0
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]) # GL_ARRAY_BUFFER is vertex attribute
+    # Generate two Vertex Buffer Object (VBO)
+    vbo = glGenBuffers(1) 
+    glBindBuffer(GL_ARRAY_BUFFER, vbo)
     glBufferData(GL_ARRAY_BUFFER, vertices.nbytes, vertices, GL_STATIC_DRAW)
     glEnableVertexAttribArray(0) # the location of the vertex attribute: position
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*dtype, None)
 
-    # Bind the second buffer, copy the color data to the target buffer
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[1])
-    glBufferData(GL_ARRAY_BUFFER, normals.nbytes, normals, GL_STATIC_DRAW)
-    glEnableVertexAttribArray(1) # the location of the vertex attribute: color
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3*dtype, None)
-
-    
     # Generate the name of Element Buffer Object (EBO)
-    # Bind a buffer object to the name of EBO
     ebo = glGenBuffers(1) # Error occurs if vbo < 0
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo) # GL_ARRAY_BUFFER is vertex attribute
-    # Copy the connectivity data into the target buffer 
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, triconnect.nbytes, triconnect, GL_STATIC_DRAW)
 
+    
     return vao
+
+
+def DrawBox(vao,
+            AmatLoc,Amat,
+            MmatLoc,Mmat,
+            cvecLoc,cvec):
+    glBindVertexArray(vao)
+    glUniformMatrix4fv(AmatLoc, 1, GL_FALSE, glm.value_ptr(Amat))
+    glUniformMatrix4fv(MmatLoc, 1, GL_FALSE, glm.value_ptr(Mmat))
+    glUniform3fv(cvecLoc, 1, glm.value_ptr(cvec))
+    glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, None) 
 
 
 def main():
@@ -157,73 +184,62 @@ def main():
     # register key callbacks, https://www.glfw.org/docs/3.3/input_guide.html
     glfwSetKeyCallback(window, key_callback)
     
-
-
-    # - - - - - - - VAO - - - - - - - - - -
-    vaoCube = createVAOCube()
+    # Initialize box
+    vaoBox = InitializeBox()
     
-    # - - - - - - - Shader - - - - - - - - - -
-    # Note that VAO should be assigned 
-    shader = CreateShader(vertexShaderSrc, fragmentShaderSrc)
+    # Create Shader program
+    shaderBox = CreateShader(vertexShaderSrc, fragmentShaderSrc)
 
     # Get the location of uniform variable 'Amat' matrix in the shader program 
-    AmatLoc = glGetUniformLocation(shader, 'Amat')
-    MmatLoc = glGetUniformLocation(shader, 'Mmat')
+    AmatLocBox = glGetUniformLocation(shaderBox, 'Amat')
+    MmatLocBox = glGetUniformLocation(shaderBox, 'Mmat')
+    cvecLocBox = glGetUniformLocation(shaderBox, 'cvec')
     
 
     # uncomment this call to draw in wireframe polygons
     # glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 
-    # backface culling
-    # glEnable(GL_CULL_FACE)
-    glFrontFace(GL_CCW)
     
     # Loop until the user closes the window
     while not glfwWindowShouldClose(window):
 
-        # clear color buffers to preset values
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        # glEnable(GL_DEPTH_TEST)
-
-        glUseProgram(shader)
-
-        # - - - - - - Viewing Control - - - - - 
-        # perspective 
-        # https://glm.g-truc.net/0.9.9/api/a00665.html#ga747c8cf99458663dd7ad1bb3a2f07787
+        
+        # projection matrix 
         aspect = 800./600.
-        near = 1.
-        far = 10.
+        near = 0.1
+        far = 100.
         fovy = glm.radians(45)
         P = glm.perspective(fovy, aspect, near, far)
         
         # view matrix
-        ctime = glfwGetTime()
-        radius = 3.
-        camX = glm.sin(ctime)*radius
-        camZ = glm.cos(ctime)*radius
-        camY = 3.0
-        cameraUp    = glm.vec3(0., 1.,  0.)
-        cameraPos   = glm.vec3(camX,camY,camZ)
-        targetPos   = glm.vec3(0., 0., 0.)
         V = glm.lookAt(cameraPos, targetPos, cameraUp)
         
+        
+        # Transformation of coordinate system from {0} to {1}
+        M1 = glm.translate(glm.vec3(basePos.x, basePos.y, basePos.z))*glm.rotate(baseAng, glm.vec3(0., 0., 1.))
+        # Local Shape Transformation in {1}
+        S = glm.scale(glm.vec3(2., 1., 1.))
+        T = glm.translate(glm.vec3(-1., 0., 0.))
+        G1 = T * S
 
-        # Define a 3D affine transfomation matrix (model matrix)
-        M = glm.mat4()
+        # model matrix
+        # M = glm.mat4()
+        M = M1 * G1
         Mmat = M
-
+        
         # MVP matrix 
         Amat = P*V*M
         
-        # draw cube
-        glUseProgram(shader)
-        glBindVertexArray(vaoCube)
-        glUniformMatrix4fv(AmatLoc, 1, GL_FALSE, glm.value_ptr(Amat)) # GLM matrix is column-major.
-        glUniformMatrix4fv(MmatLoc, 1, GL_FALSE, glm.value_ptr(Mmat)) # GLM matrix is column-major.
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, None) 
-        
-        # backface culling
-        # glCullFace(GL_BACK)
+        # Draw Box
+        cvec = glm.vec3(1,1,0) # yellow
+        glUseProgram(shaderBox)
+        DrawBox(vaoBox,
+                AmatLocBox,Amat,
+                MmatLocBox,Mmat,
+                cvecLocBox,cvec)
+
+ 
 
         # Swap front and back buffers
         glfwSwapBuffers(window)
@@ -232,12 +248,13 @@ def main():
         glfwPollEvents()
     
     # delete buffer
-    # glDeleteBuffers(1,vb # type: ignoreo)
-    glDeleteVertexArrays(1,vaoCube)
+    # glDeleteVertexArrays(1,vaoFrame)
+    # glDeleteVertexArrays(1,vaoBox)
     
     # When you are done using GLFW, typically just before the application exits, you need to terminate GLFW.
     # This destroys any remaining windows and releases any other resources allocated by GLFW.
     glfwTerminate()
+
 
 if __name__ == "__main__":
     main()
