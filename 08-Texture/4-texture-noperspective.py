@@ -8,8 +8,8 @@ from OpenGL.GL.shaders import compileProgram,compileShader
 
 
 lat = glm.radians(30.)
-lon = glm.radians(60.)
-radius = 5.0
+lon = glm.radians(40.)
+radius = 2.7
 camY = radius * glm.sin(lat)
 camZ = radius * glm.cos(lat) * glm.cos(lon)
 camX = radius * glm.cos(lat) * glm.sin(lon)
@@ -183,7 +183,8 @@ layout (location = 0) in vec3 vertexPosition;
 layout (location = 1) in vec3 vertexTexture; 
 layout (location = 2) in vec3 vertexNormal; 
 
-out vec2 uvtex;
+//out vec2 uvtex;
+noperspective out vec2 uvtex;
 out vec3 fragmentColor;
 uniform mat4 Amat;
 uniform mat4 Mmat;  
@@ -206,7 +207,8 @@ void main()
  
 fragmentShaderSrc_box = '''
 #version 330 core
-in vec2 uvtex;
+//in vec2 uvtex;
+noperspective in vec2 uvtex;
 in vec3 fragmentColor;
 out vec4 fragmentColorOut;
 
@@ -214,9 +216,18 @@ uniform sampler2D mytex;
 
 void main()
 {
-   //fragmentColorOut = vec4(fragmentColor, 1.0); // alpha
-   fragmentColorOut = texture(mytex, uvtex);
-   //fragmentColorOut = texture(mytex, uvtex) * vec4(fragmentColor, 1.0);
+    // fragmentColorOut = vec4(fragmentColor, 1.0); // alpha
+    fragmentColorOut = texture(mytex, uvtex);
+    // fragmentColorOut = texture(mytex, uvtex) * vec4(fragmentColor, 1.0);
+    /*int resolution = 10;
+    int i =  int(floor(uvtex.x*resolution));
+    int j =  int(floor(uvtex.y*resolution));
+    if ( (i+j)%2 == 0 ) {
+      fragmentColorOut = vec4(0.0, 0.0, 0.0, 1.0); 
+    } else {
+      fragmentColorOut = vec4(1.0, 1.0, 1.0, 1.0); 
+    }
+    */
 }
 '''
 

@@ -8,8 +8,8 @@ from OpenGL.GL.shaders import compileProgram,compileShader
 
 
 lat = glm.radians(30.)
-lon = glm.radians(60.)
-radius = 5.0
+lon = glm.radians(40.)
+radius = 2.7
 camY = radius * glm.sin(lat)
 camZ = radius * glm.cos(lat) * glm.cos(lon)
 camX = radius * glm.cos(lat) * glm.sin(lon)
@@ -214,9 +214,17 @@ uniform sampler2D mytex;
 
 void main()
 {
-   //fragmentColorOut = vec4(fragmentColor, 1.0); // alpha
-   fragmentColorOut = texture(mytex, uvtex);
-   //fragmentColorOut = texture(mytex, uvtex) * vec4(fragmentColor, 1.0);
+    //fragmentColorOut = vec4(fragmentColor, 1.0); // alpha
+    fragmentColorOut = texture(mytex, uvtex);
+    //fragmentColorOut = texture(mytex, uvtex) * vec4(fragmentColor, 1.0);
+    /*int resolution = 10;
+    int i =  int(floor(uvtex.x*resolution));
+    int j =  int(floor(uvtex.y*resolution));
+    if ( (i+j)%2 == 0 ) {
+      fragmentColorOut = vec4(0.0, 0.0, 0.0, 1.0); 
+    } else {
+      fragmentColorOut = vec4(1.0, 1.0, 1.0, 1.0); 
+    }*/
 }
 '''
 
